@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { translateToUrdu } from "../../../../lib/translate";
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +11,8 @@ export async function POST(request: Request) {
     const fullText = $("p").text().replace(/\s+/g, " ").trim();
     const words = fullText.split(" ").slice(0, 100).join(" ");
     const summary = words + (words.length >= 100 ? "..." : "");
-    return NextResponse.json({ fullText, summary });
+    const translated = await translateToUrdu(summary);
+    return NextResponse.json({ fullText, summary, translated });
   } catch (error) {
     return NextResponse.json({ error: "Failed to scrape blog" }, { status: 500 });
   }
