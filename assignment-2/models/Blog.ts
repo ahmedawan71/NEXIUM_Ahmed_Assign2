@@ -1,4 +1,4 @@
-import mongoose from '../lib/mongo';
+import mongoose from "mongoose";
 
 const BlogSchema = new mongoose.Schema({
   url: { type: String, required: true },
