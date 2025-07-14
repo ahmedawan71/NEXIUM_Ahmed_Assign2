@@ -1,6 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
+import { PrismaClient } from "@prisma/client";
 
-export const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
+const prisma = new PrismaClient();
+
+export async function saveToSupabase(summary: string, blogUrl: string) {
+  await prisma.summary.create({
+    data: {
+      blogUrl,
+      summary,
+    },
+  });
+}
