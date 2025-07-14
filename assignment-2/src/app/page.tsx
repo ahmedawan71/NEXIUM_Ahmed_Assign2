@@ -9,10 +9,12 @@ export default function Home() {
   const [summary, setSummary] = useState("");
   const [translated, setTranslated] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       const res = await fetch("/api/summarize", {
         method: "POST",
@@ -28,6 +30,8 @@ export default function Home() {
       }
     } catch {
       setError("Failed to process request");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,13 +45,25 @@ export default function Home() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             className="w-full"
+            disabled={loading}
+            aria-label="Blog URL input"
           />
-          <Button type="submit" className="btn btn-primary">
-            Summarize
+          <Button
+            type="submit"
+            className="btn btn-primary"
+            disabled={loading}
+            aria-label="Submit URL to summarize"
+          >
+            {loading ? "Summarizing..." : "Summarize"}
           </Button>
         </form>
+        {loading && (
+          <div className="mt-4 flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        )}
         {error && <p className="text-red-500 mt-4">{error}</p>}
-        {summary && (
+        {summary && !loading && (
           <div className="mt-4">
             <h2 className="text-lg font-bold">Summary:</h2>
             <p>{summary}</p>
@@ -58,4 +74,4 @@ export default function Home() {
       </Card>
     </div>
   );
-}
+} 
