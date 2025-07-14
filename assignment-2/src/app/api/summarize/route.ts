@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     await saveToSupabase(summary, url);
     await saveToMongoDB(fullText, url);
     return NextResponse.json({ fullText, summary, translated });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: "Failed to scrape blog" }, { status: 500 });
   }
 }
