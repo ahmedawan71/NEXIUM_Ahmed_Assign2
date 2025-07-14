@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
+import { BookOpen, Loader2 } from "lucide-react";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -36,43 +37,65 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-6">Blog Summarization Tool</h1>
-      <Card className="p-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-200 flex flex-col items-center justify-center p-4">
+      <header className="text-center mb-8">
+        <div className="flex items-center justify-center gap-3">
+          <BookOpen className="h-10 w-10 text-green-700" />
+          <h1 className="text-4xl font-extrabold text-green-800 tracking-tight">
+            Blog Summarization Tool
+          </h1>
+        </div>
+        <p className="text-lg text-gray-600 mt-2 max-w-md mx-auto">
+          Summarize any blog and translate it into Urdu instantly!
+        </p>
+      </header>
+      <Card className="w-full max-w-lg p-6 shadow-xl rounded-2xl bg-white">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             type="url"
             placeholder="Enter blog URL"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="w-full"
+            className="w-full border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all rounded-md py-2"
             disabled={loading}
             aria-label="Blog URL input"
           />
           <Button
             type="submit"
-            className="btn btn-primary"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-md transition-all"
             disabled={loading}
             aria-label="Submit URL to summarize"
           >
-            {loading ? "Summarizing..." : "Summarize"}
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Summarizing...
+              </span>
+            ) : (
+              "Summarize"
+            )}
           </Button>
         </form>
-        {loading && (
-          <div className="mt-4 flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-          </div>
+        {error && (
+          <p className="text-red-500 mt-4 text-center font-medium animate-pulse">{error}</p>
         )}
-        {error && <p className="text-red-500 mt-4">{error}</p>}
         {summary && !loading && (
-          <div className="mt-4">
-            <h2 className="text-lg font-bold">Summary:</h2>
-            <p>{summary}</p>
-            <h2 className="text-lg font-bold">Translated (Urdu):</h2>
-            <p>{translated}</p>
+          <div className="mt-6 space-y-4">
+            <details className="bg-gray-50 rounded-md p-3">
+              <summary className="text-lg font-semibold text-green-800 cursor-pointer hover:text-green-600">
+                Summary
+              </summary>
+              <p className="text-gray-700 mt-2 leading-relaxed">{summary}</p>
+            </details>
+            <details className="bg-gray-50 rounded-md p-3">
+              <summary className="text-lg font-semibold text-green-800 cursor-pointer hover:text-green-600">
+                Translated (Urdu)
+              </summary>
+              <p className="text-gray-700 mt-2 font-urdu leading-relaxed direction-rtl">{translated}</p>
+            </details>
           </div>
         )}
       </Card>
     </div>
   );
-} 
+}

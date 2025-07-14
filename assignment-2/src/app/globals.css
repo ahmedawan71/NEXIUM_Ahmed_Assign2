@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap');
+
+.font-urdu {
+  font-family: 'Noto Nastaliq Urdu', sans-serif;
+  direction: rtl; 
+}
 
 @custom-variant dark (&:is(.dark *));
 
