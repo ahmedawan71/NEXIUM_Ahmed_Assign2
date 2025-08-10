@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
-import * as cheerio from "cheerio";
-import { translateToUrdu } from "../../../../lib/translate";
 import { saveToSupabase } from "../../../../lib/supabase";
-import { saveToMongoDB } from "../../../../lib/mongodb";
 
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json();
-    const { data } = await axios.get(url);
-    const $ = cheerio.load(data);
-    const fullText = $("p").text().replace(/\s+/g, " ").trim();
-    const words = fullText.split(" ").slice(0, 100).join(" ");
-    const summary = words + (words.length >= 100 ? "..." : "");
-    const translated = await translateToUrdu(summary);
-    await saveToSupabase(summary, url);
-    await saveToMongoDB(fullText, url);
-    return NextResponse.json({ fullText, summary, translated });
+    const { text, url } = await request.json();
+    
+    if (!text) {
+      return NextResponse.json({ error: "Text is required" }, { status: 400 });
+    }
+
+    const words = text.split(" ").slice(0, 100);
+    const summary = words.join(" ") + (words.length >= 100 ? "..." : "");
+
+    if (url) {
+      await saveToSupabase(summary, url);
+    }
+
+    return NextResponse.json({ summary });
   } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Failed to scrape blog" }, { status: 500 });
+    console.error("Summarization error:", error);
+    return NextResponse.json({ error: "Failed to summarize text" }, { status: 500 });
   }
 }
