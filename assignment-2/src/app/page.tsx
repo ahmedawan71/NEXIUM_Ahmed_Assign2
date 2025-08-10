@@ -10,7 +10,6 @@ export default function Home() {
   const [scrapedText, setScrapedText] = useState("");
   const [summary, setSummary] = useState("");
   const [dictionaryTranslation, setDictionaryTranslation] = useState("");
-  const [aiTranslation, setAiTranslation] = useState("");
   const [error, setError] = useState("");
   const [loadingStates, setLoadingStates] = useState({
     scraping: false,
@@ -49,7 +48,6 @@ export default function Home() {
     setError("");
     setSummary("");
     setDictionaryTranslation("");
-    setAiTranslation("");
     setLoading("scraping", true);
 
     try {
@@ -114,29 +112,6 @@ export default function Home() {
       setError("Failed to translate with dictionary");
     } finally {
       setLoading("dictionaryTranslating", false);
-    }
-  };
-
-  const handleAiTranslate = async () => {
-    setError("");
-    setLoading("aiTranslating", true);
-
-    try {
-      const res = await fetch("/api/translate/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: summary }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setAiTranslation(data.translated);
-      }
-    } catch {
-      setError("Failed to translate with AI");
-    } finally {
-      setLoading("aiTranslating", false);
     }
   };
 
@@ -326,40 +301,7 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* AI Translation */}
-        {aiTranslation && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-green-800">
-                AI Translation (Urdu)
-              </h3>
-              <Button
-                onClick={() => copyToClipboard(aiTranslation, "ai")}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                {copiedStates.ai ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Copy
-                  </>
-                )}
-              </Button>
-            </div>
-            <div className="bg-gray-50 rounded-md p-4">
-              <p className="text-gray-700 leading-relaxed font-urdu direction-rtl">
-                {aiTranslation}
-              </p>
-            </div>
-          </div>
-        )}
+        
       </Card>
     </div>
   );
